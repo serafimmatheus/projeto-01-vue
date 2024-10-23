@@ -4,7 +4,13 @@
       class="flex items-center px-4 py-3 border-b border-gray-400 last:border-b-0"
     >
       <div class="flex items-center justify-center mr-2">
-        <button class="text-gray-400">
+        <button
+          @click="toggleCompletedTodo"
+          :class="{
+            'text-green-500': foiCompletado,
+            'text-gray-400': !foiCompletado,
+          }"
+        >
           <svg
             class="w-5 h-5"
             fill="none"
@@ -26,13 +32,14 @@
         <input
           type="text"
           placeholder="Digite a sua tarefa"
-          value="Estudar Vue 3"
+          :value="todo.title"
+          @keyup.enter="updatedTodo"
           class="bg-gray-300 placeholder-gray-500 text-gray-700 font-light focus:outline-none block w-full appearance-none leading-normal mr-3"
         />
       </div>
 
       <div class="ml-auto flex items-center justify-center">
-        <button class="focus:outline-none">
+        <button @click="removeTodo" class="focus:outline-none">
           <svg
             class="ml-3 h-4 w-4 text-gray-500"
             viewBox="0 0 24 24"
@@ -55,3 +62,54 @@
     </div>
   </div>
 </template>
+
+<script>
+import { ref } from 'vue'
+import { useStore } from 'vuex'
+
+export default {
+  name: 'TodoForm',
+  props: {
+    todo: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
+  },
+
+  setup(props) {
+    const store = useStore()
+    const foiCompletado = ref(false)
+
+    const removeTodo = () => {
+      store.dispatch('removeTodo', props.todo.id)
+    }
+
+    const updatedTodo = ($event) => {
+      console.log($event.target.value)
+
+      if ($event.target.value.trim().length <= 4) {
+        return
+      }
+
+      store.dispatch('updateTodo', {
+        id: props.todo.id,
+        title: $event.target.value.trim(),
+        completed: props.todo.completed,
+      })
+    }
+
+    const toggleCompletedTodo = () => {
+      store.dispatch('toggleCompletedTodo', props.todo)
+      foiCompletado.value = !props.foiCompletado
+    }
+
+    return {
+      foiCompletado,
+      removeTodo,
+      updatedTodo,
+      toggleCompletedTodo,
+    }
+  },
+}
+</script>

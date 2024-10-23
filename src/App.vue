@@ -1,34 +1,11 @@
 <template>
-  <div class="px-3 py-10 md:px-10">
-    <div class="w-full sm:w-1/2 lg:w-1/3 mx-auto">
-      <TodoForm />
-      <TodoItemsList />
-    </div>
-  </div>
+  <header class="border-b border-gray-50">
+    <nav class="flex gap-10 max-w-7xl mx-auto w-full px-5 py-8">
+      <router-link class="text-white" to="/">Home</router-link>
+      <router-link class="text-white" to="/tasks-completed"
+        >Tarefas concluidas</router-link
+      >
+    </nav>
+  </header>
+  <router-view />
 </template>
-
-<script>
-import TodoItemsList from '@/components/TodoItemsList.vue'
-import TodoForm from './components/TodoForm.vue'
-import axios from 'axios'
-
-export default {
-  name: 'App',
-  components: {
-    TodoForm,
-    TodoItemsList,
-  },
-
-  data() {
-    return {
-      todos: [],
-    }
-  },
-
-  async created() {
-    this.todos = await axios
-      .get('http://localhost:8081/todos')
-      .then((response) => response.data)
-  },
-}
-</script>
