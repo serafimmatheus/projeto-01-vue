@@ -7,8 +7,8 @@
         <button
           @click="toggleCompletedTodo"
           :class="{
-            'text-green-500': foiCompletado,
-            'text-gray-400': !foiCompletado,
+            'text-green-500': isComplete,
+            'text-gray-400': !isComplete,
           }"
         >
           <svg
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -79,7 +79,11 @@ export default {
 
   setup(props) {
     const store = useStore()
-    const foiCompletado = ref(false)
+    const isComplete = ref(false)
+
+    onMounted(() => {
+      isComplete.value = props.todo.completed
+    })
 
     const removeTodo = () => {
       store.dispatch('removeTodo', props.todo.id)
@@ -101,11 +105,11 @@ export default {
 
     const toggleCompletedTodo = () => {
       store.dispatch('toggleCompletedTodo', props.todo)
-      foiCompletado.value = !props.foiCompletado
+      isComplete.value = !isComplete.value
     }
 
     return {
-      foiCompletado,
+      isComplete,
       removeTodo,
       updatedTodo,
       toggleCompletedTodo,
